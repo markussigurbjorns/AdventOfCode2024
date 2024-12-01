@@ -13,12 +13,12 @@ fn main() -> Result<()> {
    file.read_to_string(&mut contents).map_err(|err|{
       eprintln!("ERROR: could not map contents of a file to a string {err}");
    })?;
-   solve_part1(contents.clone());
-   solve_part2(contents.clone());
+   solve_part1(&contents);
+   solve_part2(&contents);
    Ok(())
 }
 
-fn solve_part1(input: String) {
+fn solve_part1(input: &String) {
    let mut column1 = Vec::new();
    let mut column2 = Vec::new();
    for line in input.lines() {
@@ -35,7 +35,7 @@ fn solve_part1(input: String) {
    println!("{sum}")
 }
 
-fn solve_part2 (input: String) {
+fn solve_part2 (input: &String) {
    let mut column = Vec::new();
    let mut frequency_map = HashMap::new();
 
