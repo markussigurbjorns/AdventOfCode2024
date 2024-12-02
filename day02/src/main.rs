@@ -1,6 +1,5 @@
 use std::fs::File;
 use std::io::prelude::*;
-use std::iter::Enumerate;
 use std::result;
 
 type Result<T> = result::Result<T, ()>;
