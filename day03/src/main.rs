@@ -23,7 +23,7 @@ enum Token {
     Number(i64),
     LeftParen,
     RightParen,
-    Comm_c,
+    Comma,
     Do,
     Dont,
     Invalid,
