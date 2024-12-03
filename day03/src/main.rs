@@ -19,15 +19,14 @@ fn main() -> Result<()> {
 
 #[derive(Debug, PartialEq)]
 enum Token {
-    Identifier(String),
     Mul,
     Number(i64),
     LeftParen,
     RightParen,
-    Comma,
+    Comm_c,
     Do,
     Dont,
-    Invalid(char),
+    Invalid,
 }
 
 fn lexer(input: &str) -> Vec<Token> {
@@ -77,11 +76,11 @@ fn lexer(input: &str) -> Vec<Token> {
                 } else if identifier.ends_with("mul") {
                     tokens.push(Token::Mul);
                 } else {
-                    tokens.push(Token::Identifier(identifier));
+                    tokens.push(Token::Invalid);
                 }
             }
-            c => {
-                tokens.push(Token::Invalid(c));
+            _c => {
+                tokens.push(Token::Invalid);
                 chars.next();
             }
         }
