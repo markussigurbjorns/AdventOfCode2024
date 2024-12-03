@@ -96,16 +96,16 @@ fn solve_part1(input: &String) {
         let mut iter = l.iter().peekable();
         while let Some(token) = iter.next() {
             if let Token::Mul = token {
-                    if let Some(Token::LeftParen) = iter.next() {
-                        if let Some(Token::Number(x)) = iter.next() {
-                            if let Some(Token::Comma) = iter.next() {
-                                if let Some(Token::Number(y)) = iter.next() {
-                                    if let Some(Token::RightParen) = iter.next() {
-                                        sum += x * y;
-                                    }
+                if let Some(Token::LeftParen) = iter.next() {
+                    if let Some(Token::Number(x)) = iter.next() {
+                        if let Some(Token::Comma) = iter.next() {
+                            if let Some(Token::Number(y)) = iter.next() {
+                                if let Some(Token::RightParen) = iter.next() {
+                                    sum += x * y;
                                 }
                             }
                         }
+                    }
                 }
             }
         }
@@ -120,22 +120,28 @@ fn solve_part2(input: &String) {
         let l: Vec<Token> = lexer(line);
         let mut iter = l.iter().peekable();
         while let Some(token) = iter.next() {
-            if let Token::Do = token {dont = false;continue;}
-            if let Token::Dont = token {dont = true;continue;}
+            if let Token::Do = token {
+                dont = false;
+                continue;
+            }
+            if let Token::Dont = token {
+                dont = true;
+                continue;
+            }
             if let Token::Mul = token {
-                    if dont {
-                        continue;
-                    }
-                    if let Some(Token::LeftParen) = iter.next() {
-                        if let Some(Token::Number(x)) = iter.next() {
-                            if let Some(Token::Comma) = iter.next() {
-                                if let Some(Token::Number(y)) = iter.next() {
-                                    if let Some(Token::RightParen) = iter.next() {
-                                        sum += x * y;
-                                    }
+                if dont {
+                    continue;
+                }
+                if let Some(Token::LeftParen) = iter.next() {
+                    if let Some(Token::Number(x)) = iter.next() {
+                        if let Some(Token::Comma) = iter.next() {
+                            if let Some(Token::Number(y)) = iter.next() {
+                                if let Some(Token::RightParen) = iter.next() {
+                                    sum += x * y;
                                 }
                             }
                         }
+                    }
                 }
             }
         }
