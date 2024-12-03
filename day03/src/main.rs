@@ -13,17 +13,20 @@ fn main() -> Result<()> {
         eprintln!("ERROR: could not map contents of a file to a string {err}");
     })?;
     solve_part1(&contents);
-    _solve_part2(&contents);
+    solve_part2(&contents);
     Ok(())
 }
 
 #[derive(Debug, PartialEq)]
 enum Token {
     Identifier(String),
+    Mul,
     Number(i64),
     LeftParen,
     RightParen,
     Comma,
+    Do,
+    Dont,
     Invalid(char),
 }
 
@@ -60,14 +63,22 @@ fn lexer(input: &str) -> Vec<Token> {
             c if c.is_alphabetic() => {
                 let mut identifier = String::new();
                 while let Some(&ch) = chars.peek() {
-                    if ch.is_alphanumeric() {
+                    if ch.is_alphanumeric() || ch == '\'' {
                         identifier.push(ch);
                         chars.next();
                     } else {
                         break;
                     }
                 }
-                tokens.push(Token::Identifier(identifier));
+                if identifier.ends_with("don't") {
+                    tokens.push(Token::Dont);
+                } else if identifier.ends_with("do") {
+                    tokens.push(Token::Do);
+                } else if identifier.ends_with("mul") {
+                    tokens.push(Token::Mul);
+                } else {
+                    tokens.push(Token::Identifier(identifier));
+                }
             }
             c => {
                 tokens.push(Token::Invalid(c));
@@ -79,12 +90,55 @@ fn lexer(input: &str) -> Vec<Token> {
 }
 
 fn solve_part1(input: &String) {
+    let mut sum = 0;
     for line in input.lines() {
-        let mut l: Vec<Token> = lexer(line);
-        for v in l {
-            println!("{:?}", v)
+        let l: Vec<Token> = lexer(line);
+        let mut iter = l.iter().peekable();
+        while let Some(token) = iter.next() {
+            if let Token::Mul = token {
+                    if let Some(Token::LeftParen) = iter.next() {
+                        if let Some(Token::Number(x)) = iter.next() {
+                            if let Some(Token::Comma) = iter.next() {
+                                if let Some(Token::Number(y)) = iter.next() {
+                                    if let Some(Token::RightParen) = iter.next() {
+                                        sum += x * y;
+                                    }
+                                }
+                            }
+                        }
+                }
+            }
         }
     }
+    println!("{sum}")
 }
 
-fn _solve_part2(_input: &String) {}
+fn solve_part2(input: &String) {
+    let mut sum = 0;
+    let mut dont = false;
+    for line in input.lines() {
+        let l: Vec<Token> = lexer(line);
+        let mut iter = l.iter().peekable();
+        while let Some(token) = iter.next() {
+            if let Token::Do = token {dont = false;continue;}
+            if let Token::Dont = token {dont = true;continue;}
+            if let Token::Mul = token {
+                    if dont {
+                        continue;
+                    }
+                    if let Some(Token::LeftParen) = iter.next() {
+                        if let Some(Token::Number(x)) = iter.next() {
+                            if let Some(Token::Comma) = iter.next() {
+                                if let Some(Token::Number(y)) = iter.next() {
+                                    if let Some(Token::RightParen) = iter.next() {
+                                        sum += x * y;
+                                    }
+                                }
+                            }
+                        }
+                }
+            }
+        }
+    }
+    println!("{sum}")
+}
