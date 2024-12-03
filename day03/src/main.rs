@@ -62,7 +62,7 @@ fn lexer(input: &str) -> Vec<Token> {
             c if c.is_alphabetic() => {
                 let mut identifier = String::new();
                 while let Some(&ch) = chars.peek() {
-                    if ch.is_alphanumeric() || ch == '\'' {
+                    if ch.is_alphabetic() || ch == '\'' {
                         identifier.push(ch);
                         chars.next();
                     } else {
