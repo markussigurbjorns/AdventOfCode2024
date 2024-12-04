@@ -4,8 +4,11 @@ use std::result;
 
 type Result<T> = result::Result<T, ()>;
 
-const WORD_LENGTH: usize = 4;
-const WORD_BYTES: [u8; 4] = [88, 77, 65, 83];
+const XMAS_LENGTH: usize = 4;
+const XMAS_BYTES: [u8; 4] = [88, 77, 65, 83];
+
+const MAS_LENGTH: usize = 3;
+const MAS_BYTES: [u8; 3] = [77, 65, 83];
 
 fn main() -> Result<()> {
     let mut file = File::open("day04/input.txt").map_err(|err| {
@@ -16,33 +19,33 @@ fn main() -> Result<()> {
         eprintln!("ERROR: could not map contents of a file to a string {err}");
     })?;
     solve_part1(&contents);
-    _solve_part2(&contents);
+    solve_part2(&contents);
     Ok(())
 }
 
-fn check_right(index: usize, line_length: usize) -> bool {
-    if line_length - (index % line_length) >= WORD_LENGTH {
+fn check_right(index: usize, line_length: usize, length: usize) -> bool {
+    if line_length - (index % line_length) >= length {
         return true;
     }
     false
 }
 
-fn check_left(index: usize, line_length: usize) -> bool {
-    if (index) % line_length + 1 >= WORD_LENGTH {
+fn check_left(index: usize, line_length: usize, length: usize) -> bool {
+    if (index) % line_length + 1 >= length {
         return true;
     }
     false
 }
 
-fn check_up(index: usize, line_length: usize) -> bool {
-    if (index) / line_length + 1 >= WORD_LENGTH {
+fn check_up(index: usize, line_length: usize, length: usize) -> bool {
+    if (index) / line_length + 1 >= length {
         return true;
     }
     false
 }
 
-fn check_down(index: usize, line_length: usize, full_length: usize) -> bool {
-    if (full_length - index - 1) / line_length + 1 >= WORD_LENGTH {
+fn check_down(index: usize, line_length: usize, full_length: usize, length: usize) -> bool {
+    if (full_length - index - 1) / line_length + 1 >= length {
         return true;
     }
     false
@@ -60,14 +63,14 @@ fn solve_part1(input: &String) {
     let flat_input_as_bytes: &[u8] = flat_input.as_bytes();
 
     for i in 0..flat_input_as_bytes.len() {
-        if flat_input_as_bytes[i] != WORD_BYTES[0] {
+        if flat_input_as_bytes[i] != XMAS_BYTES[0] {
             continue;
         }
         // check for boundaries
-        let r: bool = check_right(i, line_length);
-        let l: bool = check_left(i, line_length);
-        let u: bool = check_up(i, line_length);
-        let d: bool = check_down(i, line_length, full_length);
+        let r: bool = check_right(i, line_length, XMAS_LENGTH);
+        let l: bool = check_left(i, line_length, XMAS_LENGTH);
+        let u: bool = check_up(i, line_length, XMAS_LENGTH);
+        let d: bool = check_down(i, line_length, full_length, XMAS_LENGTH);
 
         //println!(
         //    "index: {} - boundaries right: {}, left: {}, up: {}, down: {} ",
@@ -80,7 +83,7 @@ fn solve_part1(input: &String) {
                 flat_input_as_bytes[i + 1],
                 flat_input_as_bytes[i + 2],
                 flat_input_as_bytes[i + 3],
-            ] == WORD_BYTES
+            ] == XMAS_BYTES
             {
                 count += 1;
             }
@@ -91,7 +94,7 @@ fn solve_part1(input: &String) {
                     flat_input_as_bytes[i - line_length + 1],
                     flat_input_as_bytes[i - 2 * line_length + 2],
                     flat_input_as_bytes[i - 3 * line_length + 3],
-                ] == WORD_BYTES
+                ] == XMAS_BYTES
                 {
                     count += 1;
                 }
@@ -102,7 +105,7 @@ fn solve_part1(input: &String) {
                     flat_input_as_bytes[i + line_length + 1],
                     flat_input_as_bytes[i + 2 * line_length + 2],
                     flat_input_as_bytes[i + 3 * line_length + 3],
-                ] == WORD_BYTES
+                ] == XMAS_BYTES
                 {
                     count += 1;
                 }
@@ -114,7 +117,7 @@ fn solve_part1(input: &String) {
                 flat_input_as_bytes[i - 1],
                 flat_input_as_bytes[i - 2],
                 flat_input_as_bytes[i - 3],
-            ] == WORD_BYTES
+            ] == XMAS_BYTES
             {
                 count += 1;
             }
@@ -125,7 +128,7 @@ fn solve_part1(input: &String) {
                     flat_input_as_bytes[i - line_length - 1],
                     flat_input_as_bytes[i - 2 * line_length - 2],
                     flat_input_as_bytes[i - 3 * line_length - 3],
-                ] == WORD_BYTES
+                ] == XMAS_BYTES
                 {
                     count += 1;
                 }
@@ -136,7 +139,7 @@ fn solve_part1(input: &String) {
                     flat_input_as_bytes[i + line_length - 1],
                     flat_input_as_bytes[i + 2 * line_length - 2],
                     flat_input_as_bytes[i + 3 * line_length - 3],
-                ] == WORD_BYTES
+                ] == XMAS_BYTES
                 {
                     count += 1;
                 }
@@ -148,7 +151,7 @@ fn solve_part1(input: &String) {
                 flat_input_as_bytes[i - line_length],
                 flat_input_as_bytes[i - 2 * line_length],
                 flat_input_as_bytes[i - 3 * line_length],
-            ] == WORD_BYTES
+            ] == XMAS_BYTES
             {
                 count += 1;
             }
@@ -159,7 +162,7 @@ fn solve_part1(input: &String) {
                 flat_input_as_bytes[i + line_length],
                 flat_input_as_bytes[i + 2 * line_length],
                 flat_input_as_bytes[i + 3 * line_length],
-            ] == WORD_BYTES
+            ] == XMAS_BYTES
             {
                 count += 1;
             }
@@ -169,4 +172,91 @@ fn solve_part1(input: &String) {
     println!("{count}")
 }
 
-fn _solve_part2(_input: &String) {}
+fn solve_part2(input: &String) {
+    let mut count = 0;
+    let mut flat_input = String::new();
+    let mut line_length = 0;
+    for line in input.lines() {
+        line_length = line.len();
+        flat_input.push_str(line);
+    }
+    let full_length = flat_input.len();
+    let flat_input_as_bytes: &[u8] = flat_input.as_bytes();
+    let mut x_mas_vec: Vec<char> = vec!['O'; full_length];
+    for i in 0..flat_input_as_bytes.len() {
+        if flat_input_as_bytes[i] != MAS_BYTES[0] {
+            continue;
+        }
+        // check for boundaries
+        let r: bool = check_right(i, line_length, MAS_LENGTH);
+        let l: bool = check_left(i, line_length, MAS_LENGTH);
+        let u: bool = check_up(i, line_length, MAS_LENGTH);
+        let d: bool = check_down(i, line_length, full_length, MAS_LENGTH);
+
+        //println!(
+        //    "index: {} - boundaries right: {}, left: {}, up: {}, down: {} ",
+        //    i, r, l, u, d
+        //);
+        if r {
+            if u {
+                if [
+                    flat_input_as_bytes[i],
+                    flat_input_as_bytes[i - line_length + 1],
+                    flat_input_as_bytes[i - 2 * line_length + 2],
+                ] == MAS_BYTES
+                {
+                    if x_mas_vec[i - line_length + 1] == 'X' {
+                        count += 1;
+                    } else {
+                        x_mas_vec[i - line_length + 1] = 'X'
+                    }
+                }
+            }
+            if d {
+                if [
+                    flat_input_as_bytes[i],
+                    flat_input_as_bytes[i + line_length + 1],
+                    flat_input_as_bytes[i + 2 * line_length + 2],
+                ] == MAS_BYTES
+                {
+                    if x_mas_vec[i + line_length + 1] == 'X' {
+                        count += 1;
+                    } else {
+                        x_mas_vec[i + line_length + 1] = 'X'
+                    }
+                }
+            }
+        }
+        if l {
+            if u {
+                if [
+                    flat_input_as_bytes[i],
+                    flat_input_as_bytes[i - line_length - 1],
+                    flat_input_as_bytes[i - 2 * line_length - 2],
+                ] == MAS_BYTES
+                {
+                    if x_mas_vec[i - line_length - 1] == 'X' {
+                        count += 1;
+                    } else {
+                        x_mas_vec[i - line_length - 1] = 'X'
+                    }
+                }
+            }
+            if d {
+                if [
+                    flat_input_as_bytes[i],
+                    flat_input_as_bytes[i + line_length - 1],
+                    flat_input_as_bytes[i + 2 * line_length - 2],
+                ] == MAS_BYTES
+                {
+                    if x_mas_vec[i + line_length - 1] == 'X' {
+                        count += 1;
+                    } else {
+                        x_mas_vec[i + line_length - 1] = 'X'
+                    }
+                }
+            }
+        }
+    }
+    println!("{count}")
+}
