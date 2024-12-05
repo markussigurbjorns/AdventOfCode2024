@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use std::collections::{HashMap, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::fs::File;
 use std::io::prelude::*;
 use std::result;
@@ -250,77 +250,9 @@ fn solve_part2(input: &String) {
     println!("{sum}")
 }
 
-fn build_graph(nodes: &[u32], edges: &[(u32, u32)]) -> (HashMap<u32, Vec<u32>>, HashMap<u32, u32>) {
-    let mut adj: HashMap<u32, Vec<u32>> = HashMap::new();
-    let mut indegree: HashMap<u32, u32> = HashMap::new();
 
-    // Initialize adjacency and indegree
-    for &node in nodes {
-        adj.insert(node, Vec::new());
-        indegree.insert(node, 0);
-    }
-    for &(u, v) in edges {
-        adj.entry(u).or_insert(Vec::new()).push(v);
-        indegree.entry(u).or_insert(0); // Ensure source node is in the indegree map
-        indegree.entry(v).or_insert(0); // Ensure target node is in the indegree map
-        *indegree.get_mut(&v).unwrap() += 1; // Increment in-degree for target node
-    }
 
-    (adj, indegree)
-}
-
-fn topological_sort(edges: &[(u32, u32)], nodes: &[u32]) -> Option<Vec<u32>> {
-    // Step 1: Build the graph (including implicit nodes from edges)
-    let mut adj: HashMap<u32, Vec<u32>> = HashMap::new();
-    let mut indegree: HashMap<u32, u32> = HashMap::new();
-
-    // Ensure all nodes (explicit and implicit) are accounted for
-    for &(u, v) in edges {
-        adj.entry(u).or_insert(Vec::new()).push(v);
-        indegree.entry(u).or_insert(0); // Add source node if missing
-        indegree.entry(v).or_insert(0); // Add target node if missing
-        *indegree.get_mut(&v).unwrap() += 1; // Increment in-degree for target
-    }
-
-    for &node in nodes {
-        adj.entry(node).or_insert(Vec::new());
-        indegree.entry(node).or_insert(0);
-    }
-
-    // Step 2: Initialize a queue for nodes with zero in-degree
-    let mut queue = VecDeque::new();
-    for (&node, &deg) in &indegree {
-        if deg == 0 {
-            queue.push_back(node);
-        }
-    }
-
-    // Step 3: Perform topological sort
-    let mut result = Vec::new();
-    while let Some(u) = queue.pop_front() {
-        result.push(u);
-
-        // For each neighbor, reduce its in-degree
-        if let Some(neighbors) = adj.get(&u) {
-            for &neighbor in neighbors {
-                let in_deg = indegree.get_mut(&neighbor).unwrap();
-                *in_deg -= 1;
-                if *in_deg == 0 {
-                    queue.push_back(neighbor);
-                }
-            }
-        }
-    }
-
-    // Step 4: Check for cycles
-    if result.len() == indegree.len() {
-        Some(result) // All nodes processed, valid topological order
-    } else {
-        None // Cycle detected
-    }
-}
-
-//Kahn’s algorithm for Topological Sorting
+//todo implement Kahn’s algorithm for Topological Sorting
 fn solve_part2_v2(input: &String) {
     let mut edges = Vec::new();
     let mut process = false;
@@ -355,13 +287,7 @@ fn solve_part2_v2(input: &String) {
                 nodes.push(node.parse::<u32>().unwrap());
             }
 
-            //let (adj, mut indegree) = build_graph(&nodes, &edges);
 
-            if let Some(sorted) = topological_sort(&edges, &nodes) {
-                println!("Sorted order: {:?}", sorted);
-            } else {
-                println!("No valid topological order (cycle detected).");
-            }
         }
     }
 }
